@@ -23,7 +23,9 @@
 #define CHACHA_IV_SIZE		16
 
 #define CHACHA_KEY_SIZE		32
+#define CHACHA20_KEY_SIZE	32
 #define CHACHA_BLOCK_SIZE	64
+#define CHACHA20_BLOCK_SIZE	64
 
 /* 192-bit nonce, then 64-bit stream position */
 #define XCHACHA_IV_SIZE		32
@@ -59,10 +61,10 @@ enum chacha_constants { /* expand 32-byte k */
 
 static inline void chacha_init_consts(u32 *state)
 {
-       state[0]  = CHACHA_CONSTANT_EXPA;
-       state[1]  = CHACHA_CONSTANT_ND_3;
-       state[2]  = CHACHA_CONSTANT_2_BY;
-       state[3]  = CHACHA_CONSTANT_TE_K;
+	state[0]  = CHACHA_CONSTANT_EXPA;
+	state[1]  = CHACHA_CONSTANT_ND_3;
+	state[2]  = CHACHA_CONSTANT_2_BY;
+	state[3]  = CHACHA_CONSTANT_TE_K;
 }
 
 #endif /* _CRYPTO_CHACHA_H */
