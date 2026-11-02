@@ -1526,6 +1526,7 @@ err0:
 	 */
 	res->start -= DWC3_GLOBALS_REGS_START;
 
+	dev_info(dev, "dwc3 core probe failed: %d\n", ret);
 	return ret;
 }
 
