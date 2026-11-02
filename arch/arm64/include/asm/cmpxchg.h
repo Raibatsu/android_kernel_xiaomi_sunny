@@ -73,13 +73,13 @@ static __always_inline  unsigned long __xchg##sfx(unsigned long x,	\
 {									\
 	switch (size) {							\
 	case 1:								\
-		return __xchg_case##sfx##_8(x, ptr);			\
+		return __xchg_case##sfx##_1(x, ptr);			\
 	case 2:								\
-		return __xchg_case##sfx##_16(x, ptr);			\
+		return __xchg_case##sfx##_2(x, ptr);			\
 	case 4:								\
-		return __xchg_case##sfx##_32(x, ptr);			\
+		return __xchg_case##sfx##_4(x, ptr);			\
 	case 8:								\
-		return __xchg_case##sfx##_64(x, ptr);			\
+		return __xchg_case##sfx##_8(x, ptr);			\
 	default:							\
 		BUILD_BUG();						\
 	}								\
@@ -116,13 +116,13 @@ static __always_inline unsigned long __cmpxchg##sfx(volatile void *ptr,	\
 {									\
 	switch (size) {							\
 	case 1:								\
-		return __cmpxchg_case##sfx##_8(ptr, (u8)old, new);	\
+		return __cmpxchg_case##sfx##_1(ptr, (u8)old, new);	\
 	case 2:								\
-		return __cmpxchg_case##sfx##_16(ptr, (u16)old, new);	\
+		return __cmpxchg_case##sfx##_2(ptr, (u16)old, new);	\
 	case 4:								\
-		return __cmpxchg_case##sfx##_32(ptr, old, new);		\
+		return __cmpxchg_case##sfx##_4(ptr, old, new);		\
 	case 8:								\
-		return __cmpxchg_case##sfx##_64(ptr, old, new);		\
+		return __cmpxchg_case##sfx##_8(ptr, old, new);		\
 	default:							\
 		BUILD_BUG();						\
 	}								\
@@ -216,16 +216,16 @@ __CMPXCHG_GEN(_mb)
 	__ret;								\
 })
 
-#define __CMPWAIT_CASE(w, sfx, sz)					\
-static inline void __cmpwait_case_##sz(volatile void *ptr,		\
-				       unsigned long val)		\
+#define __CMPWAIT_CASE(w, sz, name)					\
+static inline void __cmpwait_case_##name(volatile void *ptr,		\
+					 unsigned long val)		\
 {									\
 	unsigned long tmp;						\
 									\
 	asm volatile(							\
 	"	sevl\n"							\
 	"	wfe\n"							\
-	"	ldxr" #sfx "\t%" #w "[tmp], %[v]\n"			\
+	"	ldxr" #sz "\t%" #w "[tmp], %[v]\n"			\
 	"	eor	%" #w "[tmp], %" #w "[tmp], %" #w "[val]\n"	\
 	"	cbnz	%" #w "[tmp], 1f\n"				\
 	"	wfe\n"							\
@@ -234,10 +234,10 @@ static inline void __cmpwait_case_##sz(volatile void *ptr,		\
 	: [val] "r" (val));						\
 }
 
-__CMPWAIT_CASE(w, b, 8);
-__CMPWAIT_CASE(w, h, 16);
-__CMPWAIT_CASE(w,  , 32);
-__CMPWAIT_CASE( ,  , 64);
+__CMPWAIT_CASE(w, b, 1);
+__CMPWAIT_CASE(w, h, 2);
+__CMPWAIT_CASE(w,  , 4);
+__CMPWAIT_CASE( ,  , 8);
 
 #undef __CMPWAIT_CASE
 
@@ -248,13 +248,13 @@ static __always_inline void __cmpwait##sfx(volatile void *ptr,		\
 {									\
 	switch (size) {							\
 	case 1:								\
-		return __cmpwait_case##sfx##_8(ptr, (u8)val);		\
+		return __cmpwait_case##sfx##_1(ptr, (u8)val);		\
 	case 2:								\
-		return __cmpwait_case##sfx##_16(ptr, (u16)val);		\
+		return __cmpwait_case##sfx##_2(ptr, (u16)val);		\
 	case 4:								\
-		return __cmpwait_case##sfx##_32(ptr, val);		\
+		return __cmpwait_case##sfx##_4(ptr, val);		\
 	case 8:								\
-		return __cmpwait_case##sfx##_64(ptr, val);		\
+		return __cmpwait_case##sfx##_8(ptr, val);		\
 	default:							\
 		BUILD_BUG();						\
 	}								\

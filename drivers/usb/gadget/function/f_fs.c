@@ -1411,7 +1411,6 @@ static long ffs_epfile_ioctl(struct file *file, unsigned code,
 		switch (epfile->ffs->gadget->speed) {
 		case USB_SPEED_SUPER_PLUS:
 		case USB_SPEED_SUPER:
-		case USB_SPEED_SUPER_PLUS:
 			desc_idx = 2;
 			break;
 		case USB_SPEED_HIGH:
@@ -3232,6 +3231,7 @@ static inline struct f_fs_opts *ffs_do_functionfs_bind(struct usb_function *f,
 	struct f_fs_opts *ffs_opts =
 		container_of(f->fi, struct f_fs_opts, func_inst);
 	struct ffs_data *ffs_data;
+	struct ffs_data *ffs;
 	int ret;
 
 	ENTER();
@@ -3253,6 +3253,7 @@ static inline struct f_fs_opts *ffs_do_functionfs_bind(struct usb_function *f,
 		return ERR_PTR(ret);
 
 	func->ffs = ffs_data;
+	ffs = ffs_data;
 	func->conf = c;
 	func->gadget = c->cdev->gadget;
 
