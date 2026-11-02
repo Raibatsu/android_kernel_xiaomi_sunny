@@ -3302,6 +3302,12 @@ static irqreturn_t msm_dwc3_pwr_irq(int irq, void *data)
 	struct dwc3_msm *mdwc = data;
 	struct dwc3 *dwc = platform_get_drvdata(mdwc->dwc3);
 
+	if (unlikely(!dwc)) {
+		dev_warn_ratelimited(mdwc->dev, "%s: dwc3 core not bound\n",
+				     __func__);
+		return IRQ_HANDLED;
+	}
+
 	dwc->t_pwr_evt_irq = ktime_get();
 	dev_dbg(mdwc->dev, "%s received\n", __func__);
 
@@ -4227,7 +4233,14 @@ static int dwc3_msm_probe(struct platform_device *pdev)
 
 	dwc = platform_get_drvdata(mdwc->dwc3);
 	if (!dwc) {
-		dev_err(&pdev->dev, "Failed to get dwc3 device\n");
+		/*
+		 * The dwc3 core has not bound yet (its probe was deferred).
+		 * Defer this probe as well instead of returning whatever ret
+		 * happens to hold, which could report success with interrupts
+		 * live and no core behind them.
+		 */
+		dev_info(&pdev->dev, "dwc3 core not ready, deferring probe\n");
+		ret = -EPROBE_DEFER;
 		goto put_dwc3;
 	}
 
