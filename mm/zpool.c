@@ -170,7 +170,12 @@ struct zpool *zpool_create_pool(const char *type, const char *name, gfp_t gfp,
 		return NULL;
 	}
 
-	zpool = kmalloc(sizeof(*zpool), gfp);
+	/*
+	 * gfp describes the pool's backing pages (zswap asks for highmem,
+	 * movable and CMA pages); slab allocations must not carry those bits.
+	 */
+	zpool = kmalloc(sizeof(*zpool),
+			gfp & ~(__GFP_HIGHMEM | __GFP_MOVABLE | __GFP_CMA));
 	if (!zpool) {
 		pr_err("couldn't create zpool - out of memory\n");
 		zpool_put_driver(driver);
