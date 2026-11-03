@@ -1,0 +1,11 @@
+# lmkd caps "free swap" at easy_available * ratio / div. zswap here compresses ~4.5:1,
+# so the default ratio of 1 makes lmkd report "swap is low" with ~3 GB still free.
+ro.lmk.swap_compression_ratio=4
+ro.lmk.swap_compression_ratio_div=1
+# Keep 25% instead of 40% free heap after GC in each ART app (Android Go uses 0.75).
+dalvik.vm.heaptargetutilization=0.75
+# lmkd re-checks memory on every PSI partial stall of this length; 70 ms (default) turns
+# brief app-launch hiccups into kills. Low-RAM devices default to 200.
+ro.lmk.psi_partial_stall_ms=150
+# Low-watermark kills only take cached apps (adj >= 900), not the previous app or services.
+ro.lmk.lowmem_min_oom_score=900

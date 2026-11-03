@@ -1,0 +1,6 @@
+id=sunny_memtune
+name=Sunny memory tuning
+version=1.2
+versionCode=3
+author=local
+description=swappiness 160, direct_swappiness 100, zswap lz4kd, lmkd swap_compression_ratio 4 + psi_partial_stall 150ms + lowmem_min_oom_score 900, ART heaptargetutilization 0.75. Disable or remove and reboot to revert.
